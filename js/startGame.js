@@ -1,74 +1,39 @@
-import { confetti } from "./confetti.js";
-import { createGameCard } from "./gameCard.js";
+import { initializeGameElements } from "./initializeGameElements.js";
+import { createAndShuffleCards } from "./createAndShuffleCards.js";
+import { handleCardClick } from "./handleCardClick.js";
 import { createGameMenu } from "./gameMenu.js";
-import { createIconArray, duplicateArray, shuffle } from "./utils.js";
+import { startTimer, stopTimer } from "./timer.js";
+import { showResultModal } from "./ui.js";
 
-export const startGame = (difficult) => {
-  const gameSection = document.querySelector(".game-section__container");
-  const gameTable = document.createElement("div");
-  const cardsIcons = createIconArray(difficult);
-  const duplicatedCardsIcons = duplicateArray(cardsIcons);
-  const restartBtn = document.createElement("button");
+const TIMER_DURATION = 50; // Таймер на 1 минуту (60 секунд)
 
-  gameSection.innerHTML = "";
-  restartBtn.textContent = "Рестарт";
-  gameTable.classList.add("game-table");
-  restartBtn.classList.add("restart-btn");
-
-  shuffle(duplicatedCardsIcons);
-
-  duplicatedCardsIcons.forEach((icon) =>
-    gameTable.append(createGameCard("question-circle", icon))
+export const startGame = (difficult, level) => {
+  const { gameTable, restartBtn, menuBtn } = initializeGameElements(
+    difficult,
+    level
   );
+  const cards = createAndShuffleCards(difficult);
+  gameTable.append(...cards);
 
-  gameSection.append(gameTable, restartBtn);
+  const cardsIcons = cards.map((card) => card.dataset.icon);
+  handleCardClick(gameTable, cardsIcons, level); // Добавляем обработчик клика по карточкам
 
-  let flippedCards = [];
-  let clickable = true;
-
-  gameTable.addEventListener("click", (event) => {
-    if (!clickable) return; // Если карточки еще анимируются, игнорируем клики
-    const clickedCard = event.target.closest(".game-card");
-    if (!clickedCard || flippedCards.length === 2) return; // Если клик был вне карточек или уже открыты 2 карты, ничего не делаем
-
-    if (!clickedCard.classList.contains("flip")) {
-      clickedCard.classList.add("flip");
-      flippedCards.push(clickedCard);
-    }
-
-    if (flippedCards.length === 2) {
-      clickable = false; // Запрещаем клики, пока карточки анимируются
-      const [firstCard, secondCard] = flippedCards;
-      const firstIcon = firstCard.dataset.icon;
-      const secondIcon = secondCard.dataset.icon;
-
-      if (firstIcon !== secondIcon) {
-        setTimeout(() => {
-          firstCard.classList.remove("flip");
-          secondCard.classList.remove("flip");
-          flippedCards = []; // Очищаем массив перевернутых карт
-          // После завершения анимации разрешаем следующие действия
-          clickable = true;
-        }, 500); // Увеличиваем задержку до 500 миллисекунд
-      } else {
-        setTimeout(() => {
-          flippedCards.forEach((card) => {
-            card.classList.add("successfully");
-          });
-          flippedCards = []; // Очищаем массив перевернутых карт
-          // После завершения анимации разрешаем следующие действия
-          clickable = true;
-          if (
-            document.querySelectorAll(".successfully").length ===
-            cardsIcons.length * 2
-          ) {
-            // Если все карты угаданы, выводим конфетти
-            document.querySelector(".confetti").innerHTML = confetti;
-          }
-        }, 500); // Увеличиваем задержку до 500 миллисекунд
-      }
-    }
+  restartBtn.addEventListener("click", () => {
+    stopTimer();
+    startGame(difficult, level);
+  });
+  menuBtn.addEventListener("click", () => {
+    stopTimer();
+    createGameMenu();
   });
 
-  restartBtn.addEventListener("click", createGameMenu);
+  startTimer(TIMER_DURATION, () => {
+    stopTimer(); // Останавливаем таймер
+    showResultModal(
+      "Время вышло! Попробуйте снова.",
+      createGameMenu, // Функция для кнопки "Меню"
+      () => startGame(difficult, level), // Функция для кнопки "Рестарт"
+      "Рестарт"
+    );
+  });
 };

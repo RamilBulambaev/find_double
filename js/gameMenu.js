@@ -1,30 +1,25 @@
+import { createButtons } from "./ui.js";
+import {
+  TIME,
+  confettiContainer,
+  gameSectionContainer,
+} from "./domElements.js";
+import { createLevelTitle } from "./level.js";
 import { startGame } from "./startGame.js";
 
 export const createGameMenu = () => {
-  const title = document.createElement("h2");
-  const gameSection = document.querySelector(".game-section__container");
+  gameSectionContainer.innerHTML = "";
 
-  gameSection.innerHTML = "";
-  title.textContent = "Выбор сложности";
-  title.classList.add("game-menu__title");
-  document.querySelector(".confetti").innerHTML = "";
+  const titleLevel = createLevelTitle();
+  confettiContainer.innerHTML = "";
 
-  const createDifficultButton = (difficult) => {
-    const button = document.createElement("button");
+  const createDifficultButton = () => {
+    const button = createButtons("Новая игра", ["game-menu__difficult-btn"]);
 
-    button.classList.add("game-menu__difficult-btn");
-    button.textContent = `${difficult} карт`;
-
-    button.addEventListener("click", () => startGame(difficult));
+    button.addEventListener("click", () => startGame(TIME, titleLevel));
 
     return button;
   };
 
-  gameSection.append(
-    title,
-    createDifficultButton(10),
-    createDifficultButton(12),
-    createDifficultButton(14),
-    createDifficultButton(16)
-  );
+  gameSectionContainer.append(titleLevel, createDifficultButton());
 };

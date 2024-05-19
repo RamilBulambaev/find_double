@@ -1,43 +1,29 @@
+const icons = [
+  "gem",
+  "crown",
+  "eye",
+  "heart",
+  "chess",
+  "key",
+  "clock",
+  "star",
+  "moon",
+  "sun",
+  "shield",
+  "anchor",
+  "leaf",
+  "tree",
+  "mountain",
+  "fire",
+];
+
 export const shuffle = (array) => {
-  let currentIndex = array.length,
-    randomIndex;
-
-  while (currentIndex != 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-  return array;
 };
 
 export const duplicateArray = (array) => array.flatMap((item) => [item, item]);
 
-export const createIconArray = (initialCount) => {
-  const cardsIcons = [
-    "compass",
-    "cloud",
-    "play",
-    "bolt",
-    "stop",
-    "cogs",
-    "atom",
-    "basketball-ball",
-  ];
-
-  switch (initialCount) {
-    case 10:
-      return cardsIcons.slice(0, 5);
-    case 12:
-      return cardsIcons.slice(0, 6);
-    case 14:
-      return cardsIcons.slice(0, 7);
-    case 16:
-      return cardsIcons;
-    default:
-      break;
-  }
-};
+export const createIconArray = (count) => icons.slice(0, count / 2);
