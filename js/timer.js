@@ -1,8 +1,7 @@
 let timerInterval;
-let timeRemaining;
 
-export const startTimer = (duration, mode, onTimeUp) => {
-  timeRemaining = duration;
+export const startTimer = (duration, onTimeUp) => {
+  let timeRemaining = duration;
   const timerDisplay = document.querySelector(".timer-display");
   timerDisplay.textContent = formatTime(timeRemaining);
 
@@ -19,12 +18,6 @@ export const startTimer = (duration, mode, onTimeUp) => {
 
 export const stopTimer = () => {
   clearInterval(timerInterval);
-};
-
-export const addTimeToTimer = (seconds) => {
-  timeRemaining += seconds;
-  const timerDisplay = document.querySelector(".timer-display");
-  timerDisplay.textContent = formatTime(timeRemaining);
 };
 
 const formatTime = (seconds) => {

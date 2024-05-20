@@ -13,11 +13,18 @@ export const createLevelTitle = () => {
 
 export const nextLevel = (mode) => {
   _currentLevel++;
-  const difficult = 10 + (_currentLevel - 1) * 2;
-  startGame(difficult, createLevelTitle(), mode);
+  if (mode === "time") {
+    startGame(10 + (_currentLevel - 1) * 2, createLevelTitle(), "time");
+  } else {
+    startGame(KARDS + (_currentLevel - 1) * 2, createLevelTitle(), "normal");
+  }
 };
 
 export const newGame = () => {
   _currentLevel = 1; // Сброс уровня до первого
   return createLevelTitle();
+};
+
+export const resetLevel = () => {
+  _currentLevel = 1; // Сброс уровня до первого
 };
