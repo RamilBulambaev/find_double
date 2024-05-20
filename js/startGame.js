@@ -5,29 +5,39 @@ import { createGameMenu } from "./gameMenu.js";
 import { startTimer, stopTimer } from "./timer.js";
 import { showResultModal } from "./ui.js";
 
-export const startGame = (cardsCount, level, timeLimit) => {
+const BASE_TIMER_DURATION_NORMAL = 60; // Начальное время 60 секунд для обычного режима
+const TIMER_DURATION_TIME_MODE = 15; // Таймер на 15 секунд для режима времени
+
+export const startGame = (difficult, level, mode) => {
   const { gameTable, restartBtn, menuBtn } = initializeGameElements(level);
-  const cards = createAndShuffleCards(cardsCount);
+  const cards = createAndShuffleCards(difficult);
   gameTable.append(...cards);
 
   const cardsIcons = cards.map((card) => card.dataset.icon);
-  handleCardClick(gameTable, cardsIcons, level); // Добавляем обработчик клика по карточкам
+  handleCardClick(gameTable, cardsIcons, level, mode); // Добавляем обработчик клика по карточкам
 
   restartBtn.addEventListener("click", () => {
     stopTimer();
-    startGame(cardsCount, level, timeLimit);
+    startGame(difficult, level, mode);
   });
   menuBtn.addEventListener("click", () => {
     stopTimer();
     createGameMenu();
   });
 
-  startTimer(timeLimit, () => {
+  let timerDuration;
+  if (mode === "time") {
+    timerDuration = TIMER_DURATION_TIME_MODE;
+  } else {
+    timerDuration = BASE_TIMER_DURATION_NORMAL;
+  }
+
+  startTimer(timerDuration, () => {
     stopTimer(); // Останавливаем таймер
     showResultModal(
       "Время вышло! Попробуйте снова.",
       createGameMenu, // Функция для кнопки "Меню"
-      () => startGame(cardsCount, level, timeLimit), // Функция для кнопки "Рестарт"
+      () => startGame(difficult, level, mode), // Функция для кнопки "Рестарт"
       "Рестарт"
     );
   });

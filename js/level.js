@@ -1,4 +1,4 @@
-import { KARDS, START_TIME } from "./domElements.js";
+import { KARDS } from "./domElements.js";
 import { startGame } from "./startGame.js";
 
 export let _currentLevel = 1;
@@ -11,24 +11,13 @@ export const createLevelTitle = () => {
   return titleLevel;
 };
 
-export const nextLevel = () => {
+export const nextLevel = (mode) => {
   _currentLevel++;
-  const { cardsCount, timeLimit } = getLevelParameters(_currentLevel);
-  startGame(cardsCount, createLevelTitle(), timeLimit);
+  const difficult = 10 + (_currentLevel - 1) * 2;
+  startGame(difficult, createLevelTitle(), mode);
 };
 
 export const newGame = () => {
   _currentLevel = 1; // Сброс уровня до первого
   return createLevelTitle();
-};
-
-export const getLevelParameters = (level) => {
-  const baseCardsCount = KARDS; // Начальное количество карт
-  const baseTimeLimit = START_TIME; // Начальное время (в секундах)
-
-  // Логика увеличения сложности
-  const cardsCount = baseCardsCount + level * 2; // Увеличиваем количество карт на 2 с каждым уровнем
-  const timeLimit = Math.max(baseTimeLimit - level * 5, 10); // Уменьшаем время на 5 секунд с каждым уровнем, минимум 10 секунд
-
-  return { cardsCount, timeLimit };
 };

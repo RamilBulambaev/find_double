@@ -1,6 +1,6 @@
 import { createButtons, createDiv } from "./ui.js";
-import { gameSectionContainer, confettiContainer, KARDS, START_TIME } from "./domElements.js";
-import { _currentLevel, createLevelTitle, newGame, getLevelParameters } from "./level.js";
+import { gameSectionContainer, confettiContainer } from "./domElements.js";
+import { _currentLevel, createLevelTitle, newGame } from "./level.js";
 import { startGame } from "./startGame.js";
 
 export const createGameMenu = () => {
@@ -12,23 +12,35 @@ export const createGameMenu = () => {
   const menuBtns = createDiv(["menu-btns"]);
 
   const createDifficultButton = () => {
-    const buttonNewGame = createButtons("Новая игра", ["game-menu__difficult-btn"]);
+    const buttonNewGame = createButtons("Новая игра", [
+      "game-menu__difficult-btn",
+    ]);
 
     buttonNewGame.addEventListener("click", () => {
-      const { cardsCount, timeLimit } = getLevelParameters(1);
-      startGame(cardsCount, newGame(), timeLimit); // Сброс уровня до первого при новой игре
+      startGame(10, newGame(), "normal"); // Сброс уровня до первого при новой игре
+    });
+
+    const buttonTimeMode = createButtons("Режим времени", [
+      "game-menu__difficult-btn",
+    ]);
+
+    buttonTimeMode.addEventListener("click", () => {
+      startGame(10, newGame(), "time"); // Начать игру с 10 карточками и режимом времени
     });
 
     if (_currentLevel > 1) {
-      const buttonContinue = createButtons("Продолжить", ["game-menu__difficult-btn"]);
+      const buttonContinue = createButtons("Продолжить", [
+        "game-menu__difficult-btn",
+      ]);
       buttonContinue.addEventListener("click", () => {
-        const { cardsCount, timeLimit } = getLevelParameters(_currentLevel);
-        startGame(cardsCount, createLevelTitle(), timeLimit); // Продолжение игры с текущего уровня
+        const difficult = 10 + (_currentLevel - 1) * 2;
+        const mode = "normal"; // Обычный режим игры
+        startGame(difficult, createLevelTitle(), mode); // Продолжение игры с текущего уровня
       });
       menuBtns.append(buttonContinue);
     }
 
-    menuBtns.append(buttonNewGame);
+    menuBtns.append(buttonNewGame, buttonTimeMode);
 
     return menuBtns;
   };

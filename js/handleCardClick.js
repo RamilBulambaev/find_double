@@ -2,10 +2,10 @@ import { confetti } from "./confetti.js";
 import { confettiContainer } from "./domElements.js";
 import { createGameMenu } from "./gameMenu.js";
 import { nextLevel } from "./level.js";
-import { stopTimer } from "./timer.js";
+import { stopTimer, addTimeToTimer } from "./timer.js";
 import { showResultModal } from "./ui.js";
 
-export const handleCardClick = (gameTable, cardsIcons) => {
+export const handleCardClick = (gameTable, cardsIcons, level, mode) => {
   let flippedCards = [];
   let clickable = true;
 
@@ -29,8 +29,7 @@ export const handleCardClick = (gameTable, cardsIcons) => {
           firstCard.classList.remove("flip");
           secondCard.classList.remove("flip");
           flippedCards = []; // Очищаем массив перевернутых карт
-          // После завершения анимации разрешаем следующие действия
-          clickable = true;
+          clickable = true; // После завершения анимации разрешаем следующие действия
         }, 500); // Увеличиваем задержку до 500 миллисекунд
       } else {
         setTimeout(() => {
@@ -38,19 +37,17 @@ export const handleCardClick = (gameTable, cardsIcons) => {
             card.classList.add("successfully");
           });
           flippedCards = []; // Очищаем массив перевернутых карт
-          // После завершения анимации разрешаем следующие действия
-          clickable = true;
-          if (
-            document.querySelectorAll(".successfully").length ===
-            cardsIcons.length
-          ) {
-            // Если все карты угаданы, выводим конфетти
+          clickable = true; // После завершения анимации разрешаем следующие действия
+          if (mode === "time") {
+            addTimeToTimer(5); // Добавляем 5 секунд к таймеру
+          }
+          if (document.querySelectorAll(".successfully").length === cardsIcons.length) {
             confettiContainer.innerHTML = confetti;
             stopTimer();
             showResultModal(
               "Поздравляем! Вы выиграли!",
               createGameMenu, // Функция для кнопки "Меню"
-              () => nextLevel(), // Функция для кнопки "Следующий уровень"
+              () => nextLevel(mode), // Функция для кнопки "Следующий уровень"
               "Следующий уровень"
             );
           }
