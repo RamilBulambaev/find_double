@@ -1,5 +1,5 @@
-export const gameSectionContainer = document.querySelector(
-  ".game-section__container"
-);
+export const gameSectionContainer = document.querySelector(".game-section__container");
 export const confettiContainer = document.querySelector(".confetti");
-export let TIME = 24;
+export let KARDS = 10;
+export const START_TIME = 60; // Начальное время в секундах
+export const FIRST_LEVEL = 1;

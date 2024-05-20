@@ -5,14 +5,9 @@ import { createGameMenu } from "./gameMenu.js";
 import { startTimer, stopTimer } from "./timer.js";
 import { showResultModal } from "./ui.js";
 
-const TIMER_DURATION = 50; // Таймер на 1 минуту (60 секунд)
-
-export const startGame = (difficult, level) => {
-  const { gameTable, restartBtn, menuBtn } = initializeGameElements(
-    difficult,
-    level
-  );
-  const cards = createAndShuffleCards(difficult);
+export const startGame = (cardsCount, level, timeLimit) => {
+  const { gameTable, restartBtn, menuBtn } = initializeGameElements(level);
+  const cards = createAndShuffleCards(cardsCount);
   gameTable.append(...cards);
 
   const cardsIcons = cards.map((card) => card.dataset.icon);
@@ -20,19 +15,19 @@ export const startGame = (difficult, level) => {
 
   restartBtn.addEventListener("click", () => {
     stopTimer();
-    startGame(difficult, level);
+    startGame(cardsCount, level, timeLimit);
   });
   menuBtn.addEventListener("click", () => {
     stopTimer();
     createGameMenu();
   });
 
-  startTimer(TIMER_DURATION, () => {
+  startTimer(timeLimit, () => {
     stopTimer(); // Останавливаем таймер
     showResultModal(
       "Время вышло! Попробуйте снова.",
       createGameMenu, // Функция для кнопки "Меню"
-      () => startGame(difficult, level), // Функция для кнопки "Рестарт"
+      () => startGame(cardsCount, level, timeLimit), // Функция для кнопки "Рестарт"
       "Рестарт"
     );
   });

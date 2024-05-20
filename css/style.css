@@ -90,6 +90,11 @@ body {
   color: #fff;
 }
 
+.menu-btns {
+  display: flex;
+  flex-direction: column;
+}
+
 .game-table {
   max-width: 500px;
   display: flex;

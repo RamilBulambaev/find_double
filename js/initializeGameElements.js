@@ -1,7 +1,7 @@
 import { createButtons, createDiv } from "./ui.js";
 import { gameSectionContainer, confettiContainer } from "./domElements.js";
 
-export const initializeGameElements = (difficult, level) => {
+export const initializeGameElements = (level) => {
   confettiContainer.innerHTML = "";
   gameSectionContainer.innerHTML = "";
 
