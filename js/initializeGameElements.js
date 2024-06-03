@@ -1,22 +1,37 @@
 import { createButtons, createDiv } from "./ui.js";
 import { gameSectionContainer, confettiContainer } from "./domElements.js";
+import { getCurrentLevel } from "./level.js";
 
-export const initializeGameElements = (level) => {
+export const initializeGameElements = (level, mode) => {
   confettiContainer.innerHTML = "";
   gameSectionContainer.innerHTML = "";
+
+  // Создаем уровень
+  gameSectionContainer.appendChild(level);
 
   // Создаем элементы для таймера
   const timerContainer = createDiv(["timer-container"]);
   const timerDisplay = document.createElement("span");
   timerDisplay.classList.add("timer-display");
   timerDisplay.textContent = "01:00"; // Начальное значение таймера
-
-  // Добавляем элементы для таймера на страницу
   timerContainer.appendChild(timerDisplay);
-  gameSectionContainer.appendChild(timerContainer);
 
-  // Создаем уровень
-  gameSectionContainer.appendChild(level);
+  // Создание элемента с допустимыми ошибками
+  const mistakeContainer = createDiv(["mistake=container"]);
+  const mistake = document.createElement("span");
+  mistake.classList.add("mistake");
+  const currentLevel = getCurrentLevel();
+  let mistakeCount = Math.ceil(currentLevel / 10) * 10;
+  mistakeCount = mistakeCount > 50 ? 50 : mistakeCount;
+  mistake.textContent = `Доступно ошибок: ${mistakeCount}`;
+  mistakeContainer.append(mistake);
+
+  // Добавление необходимого элемента в соответствии с режимом игры
+  if (mode === "time") {
+    gameSectionContainer.appendChild(timerContainer);
+  } else {
+    gameSectionContainer.appendChild(mistakeContainer);
+  }
 
   // Создаем игровую таблицу
   const gameTable = createDiv(["game-table"]);
@@ -30,5 +45,5 @@ export const initializeGameElements = (level) => {
   gameSectionContainer.appendChild(gameBtns);
 
   // Возвращаем объект, содержащий все созданные элементы
-  return { timerDisplay, gameTable, restartBtn, menuBtn };
+  return { gameTable, restartBtn, menuBtn, mistakeCount, mistake };
 };

@@ -191,13 +191,16 @@ body.modal-active {
   pointer-events: none; /* Запрещает все события на странице */
 }
 
-body.modal-active .modal-overlay {
+body.modal-active,
+.modal-overlay {
   pointer-events: auto; /* Разрешает события только для модального окна */
 }
 
-.timer-display {
+.timer-display,
+.mistake {
+  display: inline-block;
   font-size: 2em;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   text-align: center;
   color: white; /* Изменяем цвет текста на белый */
   font-size: 24px; /* Увеличиваем размер шрифта */

@@ -1,13 +1,28 @@
+/*
+handleCardClick - логика игры
+Принимает 3 аргумента:
+1) gameTable - игровое поле (dom element)
+2) cardsIcons - массив данных, хранящий название карт(array[])
+3) mode - Режим игры (str)
+*/
+
+import { KARDS, TIME_BONUS } from "./gameSettings.js";
 import { confetti } from "./confetti.js";
 import { confettiContainer } from "./domElements.js";
 import { createGameMenu } from "./gameMenu.js";
-import { nextLevel } from "./level.js";
-import { stopTimer, startTimer } from "./timer.js";
+import { createLevelTitle, getCurrentLevel, nextLevel } from "./level.js";
+import { stopTimer, startTimer, getTimeRemaining } from "./timer.js";
 import { showResultModal } from "./ui.js";
+import { startGame } from "./startGame.js";
 
-const TIME_BONUS = 5;
-
-export const handleCardClick = (gameTable, cardsIcons, level, mode) => {
+export const handleCardClick = (
+  gameTable,
+  cardsIcons,
+  mode,
+  mistakeCount,
+  mistake,
+  difficult
+) => {
   let flippedCards = [];
   let clickable = true;
 
@@ -32,6 +47,18 @@ export const handleCardClick = (gameTable, cardsIcons, level, mode) => {
           secondCard.classList.remove("flip");
           flippedCards = [];
           clickable = true;
+          mistakeCount--;
+          mistake.textContent = `Доступно ошибок: ${mistakeCount}`;
+          if (mistakeCount <= 0) {
+            showResultModal(
+              "Вы проиграли! Попробуйте снова.",
+              createGameMenu,
+              () => {
+                startGame(difficult, createLevelTitle("normal"), "normal");
+              },
+              "Рестарт"
+            );
+          }
         }, 500);
       } else {
         setTimeout(() => {
@@ -42,23 +69,26 @@ export const handleCardClick = (gameTable, cardsIcons, level, mode) => {
           clickable = true;
 
           if (mode === "time") {
-            let timerDisplay = document.querySelector(".timer-display");
-            let timeRemaining = parseInt(timerDisplay.textContent.split(":")[1]) + TIME_BONUS;
-            startTimer(timeRemaining, () => {
-              stopTimer();
+            stopTimer(); // Останавливаем текущий таймер
+            const currentTime = getTimeRemaining();
+            const newTime = currentTime + TIME_BONUS;
+            startTimer(newTime, () => {
               showResultModal(
                 "Время вышло! Попробуйте снова.",
                 createGameMenu,
                 () => {
                   resetLevel(); // Сброс уровня до первого в режиме времени
-                  startGame(10, createLevelTitle(), "time"); // Начинаем с первого уровня режима времени
+                  startGame(KARDS, createLevelTitle("time"), "time"); // Начинаем с первого уровня режима времени
                 },
                 "Рестарт"
               );
             });
           }
 
-          if (document.querySelectorAll(".successfully").length === cardsIcons.length) {
+          if (
+            document.querySelectorAll(".successfully").length ===
+            cardsIcons.length
+          ) {
             confettiContainer.innerHTML = confetti;
             stopTimer();
             showResultModal(

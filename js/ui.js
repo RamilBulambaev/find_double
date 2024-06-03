@@ -1,10 +1,13 @@
-// Создание кнопки
+import { startGame } from "./startGame.js";
+import { createLevelTitle, nextLevel } from "./level.js";
+
 export const createButtons = (text, classes = []) => {
   const button = document.createElement("button");
   button.textContent = text;
   button.classList.add(...classes);
   return button;
 };
+
 // Создание div
 export const createDiv = (classes = []) => {
   const div = document.createElement("div");

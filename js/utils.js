@@ -52,7 +52,7 @@ const icons = [
   "tshirt",
   "utensils",
   "wheelchair",
-];
+].sort(() => Math.random() - 0.5);
 
 export const shuffle = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
