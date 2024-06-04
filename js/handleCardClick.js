@@ -10,7 +10,7 @@ import { KARDS, TIME_BONUS } from "./gameSettings.js";
 import { confetti } from "./confetti.js";
 import { confettiContainer } from "./domElements.js";
 import { createGameMenu } from "./gameMenu.js";
-import { createLevelTitle, getCurrentLevel, nextLevel } from "./level.js";
+import { createLevelTitle, nextLevel, resetLevel } from "./level.js";
 import { stopTimer, startTimer, getTimeRemaining } from "./timer.js";
 import { showResultModal } from "./ui.js";
 import { startGame } from "./startGame.js";
@@ -28,12 +28,16 @@ export const handleCardClick = (
 
   gameTable.addEventListener("click", (event) => {
     const clickedCard = event.target.closest(".game-card");
-    if (!clickedCard || flippedCards.length === 2 || !clickable) return;
+    if (
+      !clickedCard ||
+      flippedCards.length === 2 ||
+      !clickable ||
+      clickedCard.classList.contains("flip")
+    )
+      return;
 
-    if (!clickedCard.classList.contains("flip")) {
-      clickedCard.classList.add("flip");
-      flippedCards.push(clickedCard);
-    }
+    clickedCard.classList.add("flip");
+    flippedCards.push(clickedCard);
 
     if (flippedCards.length === 2) {
       clickable = false;
@@ -47,17 +51,9 @@ export const handleCardClick = (
           secondCard.classList.remove("flip");
           flippedCards = [];
           clickable = true;
-          mistakeCount--;
-          mistake.textContent = `Доступно ошибок: ${mistakeCount}`;
-          if (mistakeCount <= 0) {
-            showResultModal(
-              "Вы проиграли! Попробуйте снова.",
-              createGameMenu,
-              () => {
-                startGame(difficult, createLevelTitle("normal"), "normal");
-              },
-              "Рестарт"
-            );
+          if (mode === "normal") {
+            mistakeCount--;
+            mistake.textContent = `Доступно ошибок: ${mistakeCount}`;
           }
         }, 500);
       } else {
@@ -100,6 +96,17 @@ export const handleCardClick = (
           }
         }, 500);
       }
+    }
+    if (mistakeCount <= 0) {
+      clickable = false;
+      showResultModal(
+        "Вы проиграли! Попробуйте снова.",
+        createGameMenu,
+        () => {
+          startGame(difficult, createLevelTitle("normal"), "normal");
+        },
+        "Рестарт"
+      );
     }
   });
 };

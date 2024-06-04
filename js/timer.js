@@ -37,7 +37,7 @@ const formatTime = (seconds) => {
   return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
 };
 
-export function endTime(mode) {
+export function endTime() {
   stopTimer(); // Останавливаем таймер
   showResultModal(
     "Время вышло! Попробуйте снова.",

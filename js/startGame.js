@@ -50,6 +50,6 @@ export const startGame = (difficult, level, mode) => {
   let timerDuration;
   if (mode === "time") {
     timerDuration = TIMER_DURATION_TIME_MODE;
-    startTimer(timerDuration, () => endTime(mode, level, difficult));
+    startTimer(timerDuration, () => endTime());
   }
 };
